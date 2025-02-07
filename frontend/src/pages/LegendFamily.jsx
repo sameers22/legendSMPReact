@@ -8,19 +8,12 @@ const LegendFamily = () => {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
-                const response = await fetch('/api/fetchVideos'); // Ensure this API works
+                const response = await fetch('http://localhost:5001/api/scrape-videos');
                 if (!response.ok) {
-                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                    throw new Error('Failed to fetch videos');
                 }
-
                 const data = await response.json();
-
-                if (data && data.videos) {
-                    setVideos(data.videos); // Extract videos array correctly
-                } else {
-                    throw new Error("Invalid response format");
-                }
-
+                setVideos(data.videos);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -37,7 +30,7 @@ const LegendFamily = () => {
             <p>Watch the latest videos using #legendcookhouse from TikTok, Instagram, and YouTube!</p>
 
             {loading && <p>Loading videos... Please wait.</p>}
-            {error && <p style={{ color: 'red' }}>Error fetching videos: {error}</p>}
+            {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
             <div className="video-grid">
                 {videos.length > 0 ? (
@@ -45,7 +38,7 @@ const LegendFamily = () => {
                         <div key={index} className="video-item">
                             <iframe 
                                 src={video.embedUrl} 
-                                title={`Legend Video ${index}`} 
+                                title={`Video ${index + 1}`} 
                                 allowFullScreen
                             ></iframe>
                         </div>

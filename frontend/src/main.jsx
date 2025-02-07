@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import Contact from './pages/Contact';
@@ -8,12 +8,12 @@ import Account from './pages/Account';
 import LegendFamily from './pages/LegendFamily';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Navbar from './components/Navbar';
 
 function App() {
     return (
         <Router>
-            <div>
-            </div>
+            <Navbar /> {/* ✅ Add Navbar here to show on all pages */}
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/menu" element={<Menu />} />

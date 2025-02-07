@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import heroImage from '../assets/restaurant_hero.jpg'; // Ensure this image exists in assets
-import mapImage from '../assets/map.jpg'; // Placeholder for the location map
+import Navbar from '../components/Navbar'; // ✅ Import the global Navbar component
+import heroImage from '../assets/restaurant_hero.jpg'; 
+import mapImage from '../assets/map.jpg'; 
 import dish1 from '../assets/dish1.jpg';
 import dish2 from '../assets/dish2.jpg';
 import dish3 from '../assets/dish3.jpg';
@@ -9,19 +10,8 @@ import dish3 from '../assets/dish3.jpg';
 const Home = () => {
     return (
         <div className="home-page">
-            {/* Navigation Bar */}
-            <nav className="navbar">
-                <div className="logo">
-                    <Link to="/">🍽 Legend Cookhouse</Link>
-                </div>
-                <ul className="nav-links">
-                    <li><Link to="/menu">Menu</Link></li>
-                    <li><Link to="/account">Account</Link></li>
-                    <li><Link to="/contact">Contact</Link></li>
-                    <li><Link to="/legendfamily">Legend Family</Link></li>
-                    <li><Link to="/login">Login</Link></li>
-                </ul>
-            </nav>
+            {/* ✅ Global Navbar */}
+            <Navbar />
 
             {/* Hero Section */}
             <div className="hero" style={{ backgroundImage: `url(${heroImage})` }}>
@@ -104,23 +94,6 @@ const Home = () => {
                 .home-page {
                     font-family: Arial, sans-serif;
                     text-align: center;
-                }
-                .navbar {
-                    display: flex;
-                    justify-content: space-between;
-                    padding: 1rem 2rem;
-                    background-color: #222;
-                    color: white;
-                }
-                .nav-links {
-                    list-style: none;
-                    display: flex;
-                    gap: 15px;
-                }
-                .nav-links li a {
-                    color: white;
-                    text-decoration: none;
-                    font-size: 1rem;
                 }
                 .hero {
                     display: flex;

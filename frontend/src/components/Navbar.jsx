@@ -8,7 +8,7 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="nav-container">
                 {/* Logo */}
-                <Link to="/" className="logo">Legend Cookhouse</Link>
+                <Link to="/" className="logo">LegendCookHouse</Link>
 
                 {/* Menu Button for Mobile */}
                 <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)}>
@@ -43,7 +43,7 @@ const Navbar = () => {
                     align-items: center;
                     max-width: 1200px;
                     margin: 0 auto;
-                    padding: 0 40px;
+                    padding: 0 5px;
                     width: 100%;
                 }
                 .logo {

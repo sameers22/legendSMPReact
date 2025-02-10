@@ -10,10 +10,7 @@ import dish3 from '../assets/dish3.jpg';
 const Home = () => {
     return (
         <div className="home-page">
-            {/* ✅ Global Navbar */}
-            <Navbar />
 
-            {/* Hero Section */}
             <div className="hero" style={{ backgroundImage: `url(${heroImage})` }}>
                 <div className="hero-text">
                     <h1>Welcome to LegendCookHouse</h1>

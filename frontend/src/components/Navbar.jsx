@@ -1,28 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/leg_logo_converted.png';
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [scrolling, setScrolling] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setScrolling(true);
+            } else {
+                setScrolling(false);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
 
     return (
-        <nav className="navbar">
+        <nav className={`navbar ${scrolling ? "scrolled" : ""}`}>
             <div className="nav-container">
                 {/* Logo */}
-                <Link to="/" className="logo">LegendCookHouse</Link>
+                <Link to="/" className="logo">
+                    <img src={logo} alt="Legend Cookhouse Logo" className={`logo-img ${scrolling ? "small-logo" : ""}`} />
+                </Link>
 
-                {/* Menu Button for Mobile */}
+                {/* Mobile Menu Button */}
                 <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)}>
                     ☰
                 </button>
 
-                {/* Menu Links */}
+                {/* Navigation Links */}
                 <ul className={menuOpen ? "nav-links open" : "nav-links"}>
-                    <li><Link to="/" onClick={() => setMenuOpen(false)}>Home</Link></li>
-                    <li><Link to="/menu" onClick={() => setMenuOpen(false)}>Menu</Link></li>
-                    <li><Link to="/reservations" onClick={() => setMenuOpen(false)}>Reservations</Link></li>
-                    <li><Link to="/book-event" onClick={() => setMenuOpen(false)}>Book Even</Link></li>
-                    <li><Link to="/legendfamily" onClick={() => setMenuOpen(false)}>Legend Family</Link></li> {/* ✅ Added Legend Family */}
-                    <li><Link to="/account" onClick={() => setMenuOpen(false)}>Account</Link></li>
+                    <li><Link to="/" className={`nav-link ${scrolling ? "small-link" : ""}`} onClick={() => setMenuOpen(false)}>Home</Link></li>
+                    <li><Link to="/menu" className={`nav-link ${scrolling ? "small-link" : ""}`} onClick={() => setMenuOpen(false)}>Menu</Link></li>
+                    <li><Link to="/reservations" className={`nav-link ${scrolling ? "small-link" : ""}`} onClick={() => setMenuOpen(false)}>Reservations</Link></li>
+                    <li><Link to="/book-event" className={`nav-link ${scrolling ? "small-link" : ""}`} onClick={() => setMenuOpen(false)}>Book Event</Link></li>
+                    <li><Link to="/legendfamily" className={`nav-link ${scrolling ? "small-link" : ""}`} onClick={() => setMenuOpen(false)}>Legend Family</Link></li>
+                    <li><Link to="/account" className={`nav-link ${scrolling ? "small-link" : ""}`} onClick={() => setMenuOpen(false)}>Account</Link></li>
                 </ul>
             </div>
 
@@ -32,10 +51,16 @@ const Navbar = () => {
                     top: 0;
                     left: 0;
                     width: 100%;
-                    background: white;
+                    background: rgba(255, 255, 255, 0.8);
+                    backdrop-filter: blur(10px);
                     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                    padding: 10px 0;
+                    padding: 15px 0;
+                    transition: all 0.3s ease-in-out;
                     z-index: 1000;
+                }
+                .navbar.scrolled {
+                    background: rgba(255, 255, 255, 0.9);
+                    padding: 10px 0;
                 }
                 .nav-container {
                     display: flex;
@@ -43,14 +68,15 @@ const Navbar = () => {
                     align-items: center;
                     max-width: 1200px;
                     margin: 0 auto;
-                    padding: 0 5px;
+                    padding: 0 20px;
                     width: 100%;
                 }
-                .logo {
-                    font-size: 1.8rem;
-                    font-weight: bold;
-                    text-decoration: none;
-                    color: #d35400;
+                .logo-img {
+                    height: 80px; /* Large logo */
+                    transition: all 0.3s ease-in-out;
+                }
+                .small-logo {
+                    height: 50px; /* Shrinks when scrolling */
                 }
                 .menu-button {
                     display: none;
@@ -67,27 +93,24 @@ const Navbar = () => {
                     margin: 0;
                     padding: 0;
                 }
-                .nav-links li {
-                    transition: all 0.3s ease;
-                }
-                .nav-links li:hover {
-                    transform: scale(1.1);
-                }
-                .nav-links a {
+                .nav-link {
                     text-decoration: none;
-                    font-size: 1rem;
-                    font-weight: 500;
+                    font-size: 1.2rem;
+                    font-weight: 600;
                     color: #2c3e50;
-                    transition: color 0.3s ease;
+                    padding: 10px 15px;
+                    border-radius: 5px;
+                    transition: all 0.3s ease;
                     white-space: nowrap;
                 }
-                .nav-links a:hover {
-                    color: #d35400;
+                .small-link {
+                    font-size: 1rem; /* Shrinks text when scrolling */
+                    padding: 5px 10px;
+                }
+                .nav-link:hover {
+                    color: #d35400; /* ✅ Only the text turns yellow */
                 }
                 @media (max-width: 900px) {
-                    .nav-container {
-                        padding: 0 20px;
-                    }
                     .menu-button {
                         display: block;
                     }
@@ -98,7 +121,7 @@ const Navbar = () => {
                         top: 60px;
                         left: 0;
                         width: 100%;
-                        background: white;
+                        background: rgba(255, 255, 255, 0.9);
                         padding: 20px;
                         box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
                     }

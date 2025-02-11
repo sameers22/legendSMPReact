@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import backgroundImg from '../assets/reservation-background.png';
-import waiterImg from '../assets/waiter-cartoon.jpeg'; // ✅ Waiter Image
+
+// ✅ Import All Stickman Waiter Images
+import waiterStraight from '../assets/waiter-straight.jpg';
+import waiterLeft from '../assets/waiter-left.jpeg';
+import waiterRight from '../assets/waiter-right.jpeg';
+import waiterUp from '../assets/waiter-up.jpeg';
+import waiterDown from '../assets/waiter-down.jpeg';
+import waiterUpperLeft from '../assets/waiter-upper-left.jpeg';
+import waiterUpperRight from '../assets/waiter-upper-right.jpeg';
+import waiterDownLeft from '../assets/waiter-down-left.jpeg';
+import waiterDownRight from '../assets/waiter-down-right.jpeg';
 
 const Reservations = () => {
     const [reservation, setReservation] = useState({
@@ -14,17 +24,45 @@ const Reservations = () => {
     });
 
     const [greeting, setGreeting] = useState('Hello, welcome to Legend Cookhouse!');
+    const [waiterImage, setWaiterImage] = useState(waiterStraight); // Default Image
 
     const handleChange = (e) => {
         setReservation({ ...reservation, [e.target.name]: e.target.value });
 
-        // ✅ Extract First Name only
+        // ✅ Extract First Name Only
     if (e.target.name === "name") {
-        const firstName = e.target.value.split(" ")[0]; // Takes only the first word
+        const firstName = e.target.value.split(" ")[0]; // Get first word before space
         setGreeting(firstName ? `Hello, ${firstName}!` : "Hello, welcome to Legend Cookhouse!");
     }
-    
     };
+
+    const handleMouseMove = (e) => {
+        const form = document.querySelector(".reservation-form");
+        if (!form) return;
+
+        const { left, top, width, height } = form.getBoundingClientRect();
+        const mouseX = e.clientX - left;
+        const mouseY = e.clientY - top;
+        
+        const horizontal = mouseX / width;
+        const vertical = mouseY / height;
+
+        // ✅ Determine Waiter Image Based on Mouse Position
+        if (horizontal < 0.33 && vertical < 0.33) setWaiterImage(waiterUpperLeft);
+        else if (horizontal > 0.66 && vertical < 0.33) setWaiterImage(waiterUpperRight);
+        else if (horizontal < 0.33 && vertical > 0.66) setWaiterImage(waiterDownLeft);
+        else if (horizontal > 0.66 && vertical > 0.66) setWaiterImage(waiterDownRight);
+        else if (horizontal < 0.33) setWaiterImage(waiterLeft);
+        else if (horizontal > 0.66) setWaiterImage(waiterRight);
+        else if (vertical < 0.33) setWaiterImage(waiterUp);
+        else if (vertical > 0.66) setWaiterImage(waiterDown);
+        else setWaiterImage(waiterStraight);
+    };
+
+    useEffect(() => {
+        window.addEventListener("mousemove", handleMouseMove);
+        return () => window.removeEventListener("mousemove", handleMouseMove);
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -36,34 +74,38 @@ const Reservations = () => {
             <div className="background-overlay"></div>
             <div className="reservation-page">
                 
-                {/* ✅ Waiter Section with Thought Bubble */}
-                <div className="waiter-section">
-                    <div className="thought-bubble">
-                        <p>{greeting}</p>
-                    </div>
-                    <img src={waiterImg} alt="Waiter" className="waiter-img" />
-                </div>
-
                 <h1>Reserve a Table</h1>
                 <p>Enjoy an exclusive dining experience at Legend Cookhouse.</p>
 
-                <form className="reservation-form" onSubmit={handleSubmit}>
-                    <input type="text" name="name" placeholder="Full Name" required value={reservation.name} onChange={handleChange} />
-                    <input type="email" name="email" placeholder="Email Address" required value={reservation.email} onChange={handleChange} />
-                    <input type="tel" name="phone" placeholder="Phone Number" required value={reservation.phone} onChange={handleChange} />
-                    <input type="date" name="date" required value={reservation.date} onChange={handleChange} />
-                    <input type="time" name="time" required value={reservation.time} onChange={handleChange} />
-                    <select name="guests" required value={reservation.guests} onChange={handleChange}>
-                        {[...Array(10).keys()].map(num => <option key={num + 1} value={num + 1}>{num + 1} Guest{num > 0 ? 's' : ''}</option>)}
-                    </select>
-                    <textarea name="specialRequest" placeholder="Special Requests (optional)" value={reservation.specialRequest} onChange={handleChange} />
-                    <button type="submit">Submit Reservation</button>
-                </form>
+                <div className="reservation-box">
+                    {/* ✅ Waiter Section with Thought Bubble */}
+                    <div className="waiter-section">
+                        <div className="thought-bubble">
+                            <p>{greeting}</p>
+                            <div className="thought-bubble-tiny"></div> {/* ✅ Tiny Bubble */}
+                        </div>
+                        <img src={waiterImage} alt="Waiter" className="waiter-img" />
+                    </div>
+
+                    <form className="reservation-form" onSubmit={handleSubmit}>
+                        <input type="text" name="name" placeholder="Full Name" required value={reservation.name} onChange={handleChange} />
+                        <input type="email" name="email" placeholder="Email Address" required value={reservation.email} onChange={handleChange} />
+                        <input type="tel" name="phone" placeholder="Phone Number" required value={reservation.phone} onChange={handleChange} />
+                        <input type="date" name="date" required value={reservation.date} onChange={handleChange} />
+                        <input type="time" name="time" required value={reservation.time} onChange={handleChange} />
+                        <select name="guests" required value={reservation.guests} onChange={handleChange}>
+                            {[...Array(10).keys()].map(num => <option key={num + 1} value={num + 1}>{num + 1} Guest{num > 0 ? 's' : ''}</option>)}
+                        </select>
+                        <textarea name="specialRequest" placeholder="Special Requests (optional)" value={reservation.specialRequest} onChange={handleChange} />
+                        <button type="submit">Submit Reservation</button>
+                    </form>
+                </div>
             </div>
 
             <style jsx>{`
                 .reservation-container {
                     position: relative;
+                    width: 100%;
                     height: 100vh;
                     background: url(${backgroundImg}) no-repeat center center/cover;
                     display: flex;
@@ -83,72 +125,88 @@ const Reservations = () => {
                     z-index: 2;
                     text-align: center;
                     color: white;
-                    max-width: 600px;
+                    max-width: 700px;
+                }
+                .reservation-box {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    background: white;
+                    padding: 20px;
+                    border-radius: 15px;
+                    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
                 }
                 .waiter-section {
-                    position: absolute;
-                    right: -550px; /* ✅ Move the waiter slightly outside the reservation container */
-                    top: 60%;
-                    transform: translateY(-50%);
+                    flex: 1;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
                 }
                 .waiter-img {
-                    height: 480px;
-                    animation: float 3s ease-in-out infinite;
+                    height: 380px;
+                    transition: all 0.3s ease-in-out;
                 }
                 .thought-bubble {
                     position: absolute;
-                    top: -80px;
+                    top: -10px;
                     right: 50%;
                     transform: translateX(50%);
-                    width: 200px;
-                    background: white;
-                    padding: 10px;
-                    border-radius: 10px;
+                    width: 220px;
+                    background: black; /* ✅ Set background to black */
+                    padding: 15px;
+                    border-radius: 20px; /* ✅ Rounded shape */
                     text-align: center;
                     font-size: 1rem;
                     font-weight: bold;
-                    color: black;
+                    color: white; /* ✅ Set text color to white */
                     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+                    position: relative;
                 }
-                .thought-bubble:before {
+
+                /* ✅ Thought Bubble Tail - Three Small Circles */
+                .thought-bubble:before,
+                .thought-bubble:after {
                     content: "";
                     position: absolute;
-                    bottom: -10px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 0;
-                    height: 0;
-                    border-left: 10px solid transparent;
-                    border-right: 10px solid transparent;
-                    border-top: 10px solid white;
+                    background: black;
+                    border-radius: 50%;
                 }
-                @keyframes float {
-                    0% { transform: translateY(0px); }
-                    50% { transform: translateY(-10px); }
-                    100% { transform: translateY(0px); }
+
+                /* ✅ Large Bubble Tail */
+                .thought-bubble:before {
+                    width: 18px;
+                    height: 18px;
+                    bottom: -12px;
+                    left: 25%;
                 }
-                h1 {
-                    font-size: 2.5rem;
-                    font-weight: bold;
-                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+                /* ✅ Smallest Bubble */
+                .thought-bubble:after {
+                    width: 10px;
+                    height: 10px;
+                    bottom: -25px;
+                    left: 30%;
                 }
-                p {
-                    font-size: 1.2rem;
-                    margin-bottom: 20px;
-                    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+
+                /* ✅ Tiny Third Bubble */
+                .thought-bubble-tiny {
+                    position: absolute;
+                    width: 6px;
+                    height: 6px;
+                    background: black;
+                    border-radius: 50%;
+                    bottom: -35px;
+                    left: 35%;
                 }
                 .reservation-form {
-                    background: rgba(0, 0, 0, 0.7);
-                    padding: 20px;
-                    border-radius: 10px;
-                    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+                    flex: 2;
+                    display: flex;
+                    flex-direction: column;
+                    padding-left: 20px;
                 }
                 input, select, textarea {
-                    width: 90%;
+                    width: 100%;
                     padding: 10px;
                     margin: 10px 0;
                     border: none;
@@ -166,16 +224,6 @@ const Reservations = () => {
                 }
                 button:hover {
                     background: #e6c200;
-                }
-                @media (max-width: 768px) {
-                    .thought-bubble {
-                        left: 0;
-                        width: 150px;
-                        font-size: 0.9rem;
-                    }
-                    .waiter-img {
-                        height: 120px;
-                    }
                 }
             `}</style>
         </div>

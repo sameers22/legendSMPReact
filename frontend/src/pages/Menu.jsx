@@ -1,27 +1,71 @@
 import React, { useState } from 'react';
 import backgroundImage from '../assets/menu-background.png'; // ✅ Background image
 
+// ✅ Import Appetizer Images
+import buffaloWingsImg from '../assets/Appetizer/A1-Chicken-Wings.png';
+import bbqChickenImg from '../assets/Appetizer/A2-BBQ-Chicken-Boneless.png';
+import beefFajitasImg from '../assets/Appetizer/A3-Beef-Fajitas.png';
+import chickenFajitasImg from '../assets/Appetizer/A4-Chicken-Fajitas.png';
+import chilliChickenImg from '../assets/Appetizer/A5-Chilli-Chicken.png';
+import bonelessChickenImg from '../assets/Appetizer/A6-Crispy-Boneless-Chicken-Breast.avif';
+import calamariImg from '../assets/Appetizer/A7-Golden-Fried-Calamari.avif';
+import snapperImg from '../assets/Appetizer/A8-Fried-Guyana-Snapper.avif';
+import roastLambImg from '../assets/Appetizer/A9-Roast-Lamb.avif';
+import roastBeefImg from '../assets/Appetizer/A10-Roast-Beef.avif';
+import roastChickenImg from '../assets/Appetizer/A11-Roast-Chicken.avif';
+import bbqRibsImg from '../assets/Appetizer/A12-BBQ-Baby-Back-Ribs.avif';
+import bbqChickenFullImg from '../assets/Appetizer/A13-BBQ-Chicken.avif';
+import jerkChickenImg from '../assets/Appetizer/A14-Jerk-Chicken.avif';
+import jerkPorkImg from '../assets/Appetizer/A15-Jerk-Pork.avif';
+import pepperJumboShrimpImg from '../assets/Appetizer/A16-Pepper-Jumbo-Shrimp.avif';
+import batteredShrimpImg from '../assets/Appetizer/A17-Fried-Battered-Jumbo-Shrimp.avif';
+import shrimpWontonImg from '../assets/Appetizer/A18-Shrimp-Wonton.avif';
+import friedSharkImg from '../assets/Appetizer/A19-Fried-Shark.avif';
+import friedBangamaryImg from '../assets/Appetizer/A20-Fried-Small-Bangamary.avif';
+
+// ✅ Import Soups Images
+import seafoodSoupSmallImg from '../assets/Soups/B1-Seafood-Soup-Sm.avif';
+import chickenNoodleSoupLargeImg from '../assets/Soups/B2-Chicken-Noodle-Soup-Lg .avif';
+import chickenVeggieSoupLargeImg from '../assets/Soups/B3-Chicken-Veggie-Soup-Lg.avif';
+import seafoodSoupLargeImg from '../assets/Soups/B4-Seafood-Soup-Lg.avif';
+import chickenNoodleSoupSmallImg from '../assets/Soups/B5-Chicken-Noodle-Soup-sm.avif';
+import chickenVeggieSoupSmallImg from '../assets/Soups/B6-Chicken-Veggie-Soup.avif';
+
 const menuData = [
     {
         category: "Appetizers",
         items: [
-            { name: "Hot Buffalo Wings", price: "$12.95", description: "Crispy, spicy wings served with blue cheese dip." },
-            { name: "Jerk Wings", price: "$12.95", description: "Smoky and spicy Caribbean jerk-marinated wings." },
-            { name: "BBQ Chicken Wings", price: "$12.95", description: "Sweet and tangy BBQ sauce glazed wings." },
-            { name: "Fried Chicken Wings", price: "$12.95", description: "Golden fried, crispy wings served with ranch dip." },
-            { name: "Crispy Boneless Chicken Breast", price: "$14.95", description: "Tender, crispy chicken breast served with house sauce." },
-            { name: "Golden Fried Calamari", price: "$14.95", description: "Crispy calamari rings served with marinara sauce." },
-            { name: "Fried Guyana Snapper", price: "$16.95", description: "Delicately fried Guyanese snapper with house seasoning." },
-            { name: "Sweet Chili Chicken (New!)", price: "$15.95", description: "Crispy chicken tossed in a sweet and spicy chili sauce." }
+            { name: "Hot Buffalo Wings", price: "$12.95", description: "Crispy, spicy wings served with blue cheese dip.", image: buffaloWingsImg },
+            { name: "BBQ Chicken Wings", price: "$12.95", description: "Sweet and tangy BBQ sauce glazed wings.", image: bbqChickenImg },
+            { name: "Beef Fajitas", price: "$15.95", description: "Sizzling beef fajitas with peppers and onions.", image: beefFajitasImg },
+            { name: "Chicken Fajitas", price: "$14.95", description: "Tender chicken fajitas with seasoned veggies.", image: chickenFajitasImg },
+            { name: "Sweet Chili Chicken", price: "$15.95", description: "Crispy chicken tossed in a sweet and spicy chili sauce.", image: chilliChickenImg },
+            { name: "Crispy Boneless Chicken Breast", price: "$14.95", description: "Tender, crispy chicken breast served with house sauce.", image: bonelessChickenImg },
+            { name: "Golden Fried Calamari", price: "$14.95", description: "Crispy calamari rings served with marinara sauce.", image: calamariImg },
+            { name: "Fried Guyana Snapper", price: "$16.95", description: "Delicately fried Guyanese snapper with house seasoning.", image: snapperImg },
+            { name: "Roast Lamb", price: "$19.95", description: "Slow-roasted lamb with rich seasoning.", image: roastLambImg },
+            { name: "Roast Beef", price: "$18.95", description: "Juicy roast beef with a flavorful crust.", image: roastBeefImg },
+            { name: "Roast Chicken", price: "$14.95", description: "Slow-roasted chicken with a smoky flavor.", image: roastChickenImg },
+            { name: "BBQ Baby Back Ribs", price: "$19.95", description: "Smoky, tender BBQ ribs glazed to perfection.", image: bbqRibsImg },
+            { name: "BBQ Chicken", price: "$15.95", description: "Classic BBQ chicken with rich smoky flavors.", image: bbqChickenFullImg },
+            { name: "Jerk Chicken", price: "$16.95", description: "Spicy and flavorful jerk-marinated chicken.", image: jerkChickenImg },
+            { name: "Jerk Pork", price: "$16.95", description: "Tender pork marinated in Caribbean spices.", image: jerkPorkImg },
+            { name: "Pepper Jumbo Shrimp", price: "$18.95", description: "Sweet and spicy peppered shrimp.", image: pepperJumboShrimpImg },
+            { name: "Fried Battered Jumbo Shrimp", price: "$19.95", description: "Crispy battered shrimp served with dip.", image: batteredShrimpImg },
+            { name: "Shrimp Wonton", price: "$14.95", description: "Delicious crispy wontons filled with shrimp.", image: shrimpWontonImg },
+            { name: "Fried Shark", price: "$17.95", description: "Lightly battered and fried shark fillets.", image: friedSharkImg },
+            { name: "Fried Small Bangamary", price: "$16.95", description: "Crispy fried Bangamary fish with house seasoning.", image: friedBangamaryImg }
         ]
     },
     {
         category: "Soups",
         items: [
-            { name: "Chicken Noodle Soup", price: "$7.95", description: "Homemade broth with tender chicken and noodles." },
-            { name: "Seafood Soup", price: "$12.95", description: "Rich seafood broth with calamari, shrimp, and crab." },
-            { name: "Guyana Provision Soup", price: "$9.97", description: "Traditional Guyanese soup with root vegetables and meat." },
-            { name: "Chicken Veggie Soup", price: "$12.95", description: "Savory chicken broth loaded with fresh vegetables." }
+            { name: "Seafood Soup (Small)", price: "$12.95", description: "Rich seafood broth with calamari, shrimp, and crab.", image: seafoodSoupSmallImg },
+            { name: "Seafood Soup (Large)", price: "$16.95", description: "A larger portion of our delicious seafood soup.", image: seafoodSoupLargeImg },
+            { name: "Chicken Noodle Soup (Small)", price: "$7.95", description: "Homemade broth with tender chicken and noodles.", image: chickenNoodleSoupSmallImg },
+            { name: "Chicken Noodle Soup (Large)", price: "$11.95", description: "Large portion of classic chicken noodle soup.", image: chickenNoodleSoupLargeImg },
+            { name: "Chicken Veggie Soup (Small)", price: "$10.95", description: "Savory chicken broth loaded with fresh vegetables.", image: chickenVeggieSoupSmallImg },
+            { name: "Chicken Veggie Soup (Large)", price: "$14.95", description: "Larger bowl of nutritious chicken veggie soup.", image: chickenVeggieSoupLargeImg }
         ]
     },
     {
@@ -92,6 +136,7 @@ const menuData = [
 ];
 const Menu = () => {
     const [hoveredItem, setHoveredItem] = useState(null);
+    const [hoverPosition, setHoverPosition] = useState("left");
 
     return (
         <div className="menu-page">
@@ -106,22 +151,33 @@ const Menu = () => {
                             <li 
                                 key={idx} 
                                 className="menu-item"
-                                onMouseEnter={() => setHoveredItem(item)}
                                 onMouseLeave={() => setHoveredItem(null)}
                             >
-                                <span>{item.name}</span>
-                                <span className="price">{item.price}</span>
+                                <span 
+                                    className="item-name"
+                                    onMouseEnter={() => { setHoveredItem(item); setHoverPosition("left"); }}
+                                >
+                                    {item.name}
+                                </span>
 
-                                {/* Show Details on Hover */}
+                                <span 
+                                    className="price"
+                                    onMouseEnter={() => { setHoveredItem(item); setHoverPosition("right"); }}
+                                >
+                                    {item.price}
+                                </span>
+
+                                {/* Show Details Based on Hover Position */}
                                 {hoveredItem === item && (
-                                    <div className="item-details">
+                                    <div className={`item-details ${hoverPosition}`}>
+                                        <img src={item.image} alt={item.name} className="dish-image" />
                                         <p>{item.description}</p>
                                         <div className="order-buttons">
                                             <button className="order-btn">Order</button>
-                                            <a href="https://order.online/store/legend-cookhouse-south-ozone-park-194451/?hideModal=true&pickup=true&utm_source=sdk&visitorId=18421a12cec670eea" target="_blank" rel="noopener noreferrer" className="order-btn doordash">Order with DoorDash</a>
+                                            <a href="https://www.doordash.com/" target="_blank" rel="noopener noreferrer" className="order-btn doordash">Order with DoorDash</a>
                                             <div className="small-buttons">
-                                                <a href="https://www.ubereats.com/store/legend-cookhouse-south-ozone-park/TofQ_IA8RHu4DoykbiQjhg?diningMode=DELIVERY&mod=merchantUnavailable&modctx=%257B%2522storeUuid%2522%253A%25224e87d0fc-803c-447b-b80e-8ca46e242386%2522%257D&nt=1&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMmxlZ2VuZCUyMGNvb2tob3VzZSUyMiUyQyUyMnJlZmVyZW5jZSUyMiUzQSUyMjkxYzgwYjY1LTZhMmYtODI4Ny0wZTgwLTMyODQyMzgwZGNjYSUyMiUyQyUyMnJlZmVyZW5jZVR5cGUlMjIlM0ElMjJ1YmVyX3BsYWNlcyUyMiUyQyUyMmxhdGl0dWRlJTIyJTNBNDAuNjc0NTQ1NyUyQyUyMmxvbmdpdHVkZSUyMiUzQS03My44MDI3NiU3RA%3D%3D&ps=1" target="_blank" rel="noopener noreferrer" className="small-order-btn ubereats">UberEats</a>
-                                                <a href="https://www.grubhub.com/restaurant/legend-cookhouse-13511-rockaway-blvd-s-ozone-park/384500" target="_blank" rel="noopener noreferrer" className="small-order-btn grubhub">GrubHub</a>
+                                                <a href="https://www.ubereats.com/" target="_blank" rel="noopener noreferrer" className="small-order-btn ubereats">UberEats</a>
+                                                <a href="https://www.grubhub.com/" target="_blank" rel="noopener noreferrer" className="small-order-btn grubhub">GrubHub</a>
                                             </div>
                                         </div>
                                     </div>
@@ -142,6 +198,7 @@ const Menu = () => {
                 }
                 .title {
                     font-size: 2.5rem;
+                    color:rgb(255, 255, 255);
                     font-weight: bold;
                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
                 }
@@ -151,7 +208,7 @@ const Menu = () => {
                     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
                 }
                 .menu-section {
-                    background: rgba(0, 0, 0, 0.6);
+                    background: rgba(0, 0, 0, 0.85);
                     padding: 20px;
                     margin: 20px auto;
                     max-width: 600px;
@@ -183,9 +240,12 @@ const Menu = () => {
                     font-weight: bold;
                     color: #ffdd57;
                 }
+                .item-name {
+                    flex: 1;
+                    text-align: left;
+                }
                 .item-details {
                     position: absolute;
-                    left: 100%;
                     top: 50%;
                     transform: translateY(-50%);
                     width: 300px;
@@ -195,6 +255,19 @@ const Menu = () => {
                     color: white;
                     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
                     text-align: left;
+                }
+                .dish-image {
+                    width: 100%;
+                    max-width: 280px;
+                    height: auto;
+                    border-radius: 5px;
+                    margin-bottom: 10px;
+                }
+                .item-details.left {
+                    left: -320px;
+                }
+                .item-details.right {
+                    left: 100%;
                 }
                 .order-buttons {
                     display: flex;

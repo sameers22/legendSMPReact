@@ -9,6 +9,7 @@ import LegendFamily from './pages/LegendFamily';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Navbar from './components/Navbar';
+import Reservations from './pages/reservations';
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/legendfamily" element={<LegendFamily />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/reservations" element={<Reservations />} />
             </Routes>
         </Router>
     );

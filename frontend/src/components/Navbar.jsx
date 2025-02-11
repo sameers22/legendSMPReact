@@ -80,7 +80,7 @@ const Navbar = () => {
                 }
                 .menu-button {
                     display: none;
-                    font-size: 2rem;
+                    font-size: 5rem;
                     background: none;
                     border: none;
                     cursor: pointer;

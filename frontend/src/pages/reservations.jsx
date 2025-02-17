@@ -23,6 +23,7 @@ const Reservations = () => {
         specialRequest: ''
     });
 
+    const [submitted, setSubmitted] = useState(false); // ✅ Track if form is submitted
     const [greeting, setGreeting] = useState('Hello, welcome to Legend Cookhouse!');
     const [waiterImage, setWaiterImage] = useState(waiterStraight); // Default Image
 
@@ -37,25 +38,31 @@ const Reservations = () => {
     };
 
     const handleMouseMove = (e) => {
-        const form = document.querySelector(".reservation-form");
-        if (!form) return;
-
-        const { left, top, width, height } = form.getBoundingClientRect();
-        const mouseX = e.clientX - left;
-        const mouseY = e.clientY - top;
-        
-        const horizontal = mouseX / width;
-        const vertical = mouseY / height;
-
-        // ✅ Determine Waiter Image Based on Mouse Position
-        if (horizontal < 0.33 && vertical < 0.33) setWaiterImage(waiterUpperLeft);
-        else if (horizontal > 0.66 && vertical < 0.33) setWaiterImage(waiterUpperRight);
-        else if (horizontal < 0.33 && vertical > 0.66) setWaiterImage(waiterDownLeft);
-        else if (horizontal > 0.66 && vertical > 0.66) setWaiterImage(waiterDownRight);
-        else if (horizontal < 0.33) setWaiterImage(waiterLeft);
-        else if (horizontal > 0.66) setWaiterImage(waiterRight);
-        else if (vertical < 0.33) setWaiterImage(waiterUp);
-        else if (vertical > 0.66) setWaiterImage(waiterDown);
+        const waiter = document.querySelector(".waiter-img");
+        if (!waiter) return;
+    
+        // Get waiter bounding box (position & size)
+        const rect = waiter.getBoundingClientRect();
+        const waiterCenterX = rect.left + rect.width / 2;
+        const waiterCenterY = rect.top + rect.height / 2;
+    
+        // Get mouse position relative to waiter
+        const deltaX = e.clientX - waiterCenterX;
+        const deltaY = e.clientY - waiterCenterY;
+    
+        // Normalize values (-1 to 1 range)
+        const horizontal = deltaX / rect.width;
+        const vertical = deltaY / rect.height;
+    
+        // Determine Waiter Image Based on Mouse Position
+        if (horizontal < -0.5 && vertical < -0.5) setWaiterImage(waiterUpperLeft);
+        else if (horizontal > 0.5 && vertical < -0.5) setWaiterImage(waiterUpperRight);
+        else if (horizontal < -0.5 && vertical > 0.5) setWaiterImage(waiterDownLeft);
+        else if (horizontal > 0.3 && vertical > 0.3) setWaiterImage(waiterDownRight);
+        else if (horizontal < -0.5) setWaiterImage(waiterLeft);
+        else if (horizontal > 0.5) setWaiterImage(waiterRight);
+        else if (vertical < -0.5) setWaiterImage(waiterUp);
+        else if (vertical > 0.5) setWaiterImage(waiterDown);
         else setWaiterImage(waiterStraight);
     };
 
@@ -66,7 +73,25 @@ const Reservations = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert(`Reservation submitted for ${reservation.name} on ${reservation.date} at ${reservation.time}`);
+        setSubmitted(true); // ✅ Set submission state to true
+
+        const firstName = reservation.name.split(" ")[0] || "Guest"; // Get first name or default to "Guest"
+        setGreeting(`Thank you for your reservation, ${firstName}!`);
+
+        // ✅ Reset form & greeting after 3 seconds
+        setTimeout(() => {
+            setSubmitted(false); // ✅ Reset submitted state
+            setReservation({
+                name: '',
+                email: '',
+                phone: '',
+                date: '',
+                time: '',
+                guests: 1,
+                specialRequest: ''
+            });
+            setGreeting("Hello, welcome to Legend Cookhouse!"); // Reset greeting
+        }, 3000);
     };
 
     return (
@@ -116,7 +141,7 @@ const Reservations = () => {
                     position: absolute;
                     width: 100%;
                     height: 100%;
-                    background: rgba(0, 0, 0, 0.5);
+                    background: rgba(0, 0, 0, 0.3);
                     backdrop-filter: blur(8px);
                     z-index: 1;
                 }
@@ -142,6 +167,7 @@ const Reservations = () => {
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
+                    margin-right: 80px;
                 }
                 .waiter-img {
                     height: 380px;

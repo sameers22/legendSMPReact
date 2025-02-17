@@ -10,6 +10,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Navbar from './components/Navbar';
 import Reservations from './pages/reservations';
+import BookEvent from './pages/BookEvent';
+import Sauces from './pages/Sauces'; // ✅ Import the Sauces page
+
 
 function App() {
     return (
@@ -24,6 +27,8 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/reservations" element={<Reservations />} />
+                <Route path="/book-event" element={<BookEvent />} />
+                <Route path="/sauces" element={<Sauces />} />
             </Routes>
         </Router>
     );

@@ -31,6 +31,7 @@ import seafoodSoupLargeImg from '../assets/Soups/B4-Seafood-Soup-Lg.avif';
 import chickenNoodleSoupSmallImg from '../assets/Soups/B5-Chicken-Noodle-Soup-sm.avif';
 import chickenVeggieSoupSmallImg from '../assets/Soups/B6-Chicken-Veggie-Soup.avif';
 
+
 const menuData = [
     {
         category: "Appetizers",

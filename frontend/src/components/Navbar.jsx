@@ -38,6 +38,7 @@ const Navbar = () => {
                 <ul className={menuOpen ? "nav-links open" : "nav-links"}>
                     <li><Link to="/" className={`nav-link ${scrolling ? "small-link" : ""}`} onClick={() => setMenuOpen(false)}>Home</Link></li>
                     <li><Link to="/menu" className={`nav-link ${scrolling ? "small-link" : ""}`} onClick={() => setMenuOpen(false)}>Menu</Link></li>
+                    <li><Link to="/sauces" className="nav-link">Sauces</Link></li>
                     <li><Link to="/reservations" className={`nav-link ${scrolling ? "small-link" : ""}`} onClick={() => setMenuOpen(false)}>Reservations</Link></li>
                     <li><Link to="/book-event" className={`nav-link ${scrolling ? "small-link" : ""}`} onClick={() => setMenuOpen(false)}>Book Event</Link></li>
                     <li><Link to="/legendfamily" className={`nav-link ${scrolling ? "small-link" : ""}`} onClick={() => setMenuOpen(false)}>Legend Family</Link></li>

@@ -33,6 +33,7 @@ import chickenVeggieSoupSmallImg from '../assets/Soups/B6-Chicken-Veggie-Soup.av
 
 
 const menuData = [
+    {category: "Legend Cookhouse Menu", items: []},
     {
         category: "Appetizers",
         items: [
@@ -141,8 +142,8 @@ const Menu = () => {
 
     return (
         <div className="menu-page">
-            <h1 className="title">Legend Cookhouse Menu</h1>
-            <p className="subtitle">Authentic Caribbean & Guyanese Cuisine</p>
+            <h1 className="title"></h1>
+            <p className="subtitle"></p>
 
             {menuData.map((section, index) => (
                 <div key={index} className="menu-section">
@@ -192,10 +193,14 @@ const Menu = () => {
             <style jsx>{`
                 .menu-page {
                     text-align: center;
-                    padding: 6rem 2rem 2rem;
+                    padding: 6rem 0rem 0rem;
                     background: url(${backgroundImage}) no-repeat center center/cover;
                     color: white;
                     min-height: 100vh;
+                    width: 100vw;  /* Ensure it spans the entire viewport width */
+                    position: absolute;
+                    left: 0;
+                    right: 0;
                 }
                 .title {
                     font-size: 2.5rem;

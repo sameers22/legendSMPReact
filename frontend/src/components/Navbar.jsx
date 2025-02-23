@@ -52,7 +52,7 @@ const Navbar = () => {
                     top: 0;
                     left: 0;
                     width: 100%;
-                    background: rgba(255, 255, 255, 0.8);
+                    background: rgba(5, 5, 5, 0.8);
                     backdrop-filter: blur(10px);
                     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                     padding: 15px 0;
@@ -60,7 +60,7 @@ const Navbar = () => {
                     z-index: 1000;
                 }
                 .navbar.scrolled {
-                    background: rgba(255, 255, 255, 0.9);
+                    background: rgba(5, 5, 5, 0.9);
                     padding: 10px 0;
                 }
                 .nav-container {
@@ -98,7 +98,7 @@ const Navbar = () => {
                     text-decoration: none;
                     font-size: 1.2rem;
                     font-weight: 600;
-                    color: #2c3e50;
+                    color:rgb(255, 255, 255);
                     padding: 10px 15px;
                     border-radius: 5px;
                     transition: all 0.3s ease;
@@ -109,7 +109,7 @@ const Navbar = () => {
                     padding: 5px 10px;
                 }
                 .nav-link:hover {
-                    color: #d35400; /* ✅ Only the text turns yellow */
+                    color: #ffdd57; /* ✅ Only the text turns yellow */
                 }
                 @media (max-width: 900px) {
                     .menu-button {
@@ -122,9 +122,9 @@ const Navbar = () => {
                         top: 60px;
                         left: 0;
                         width: 100%;
-                        background: rgba(255, 255, 255, 0.9);
+                        background: rgba(5, 5, 5, 0.9);
                         padding: 20px;
-                        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+                        box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.9;
                     }
                     .nav-links.open {
                         display: flex;

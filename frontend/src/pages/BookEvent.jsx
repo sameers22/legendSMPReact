@@ -65,13 +65,16 @@ const BookEvent = () => {
 
             <style jsx>{`
                 .book-event-container {
-                    position: relative;
-                    width: 100%;
+                    padding: 2rem 0rem 0rem;
                     height: 100vh;
                     background: url(${backgroundImg}) no-repeat center center/cover;
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    width: 100vw;  /* Ensure it spans the entire viewport width */
+                    position: absolute;
+                    left: 0;
+                    right: 0;
                 }
 
                 .background-overlay {

@@ -27,7 +27,7 @@ const LegendFamily = () => {
     return (
         <div className="legend-family">
             <h1>Legend Family Videos</h1>
-            <p>Watch the latest videos using #legendcookhouse from TikTok, Instagram, and YouTube!</p>
+            <p>Watch the latest videos of our Legend Cookhouse!</p>
 
             {loading && <p>Loading videos... Please wait.</p>}
             {error && <p style={{ color: 'red' }}>Error: {error}</p>}
@@ -51,7 +51,7 @@ const LegendFamily = () => {
             <style jsx>{`
                 .legend-family {
                     text-align: center;
-                    padding: 2rem;
+                    padding: 6rem 2rem 2rem;
                     background-color: #f8f8f8;
                 }
                 .video-grid {

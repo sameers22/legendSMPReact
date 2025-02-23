@@ -133,9 +133,12 @@ const Reservations = () => {
                     width: 100%;
                     height: 100vh;
                     background: url(${backgroundImg}) no-repeat center center/cover;
+                    position: absolute;
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    left: 0;
+                    right: 0;
                 }
                 .background-overlay {
                     position: absolute;

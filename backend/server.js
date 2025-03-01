@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
@@ -9,68 +11,141 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const scrapeVideos = async () => {
-    const hashtag = 'legendcookhouse';
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-    const page = await browser.newPage();
-    let videos = [];
+const CACHE_FILE = path.join(__dirname, 'videosCache.json');
+const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
+const getCachedVideos = () => {
     try {
-        // ✅ Scrape TikTok Videos
-        await page.goto(`https://www.tiktok.com/tag/${hashtag}`, { waitUntil: 'domcontentloaded' });
-        const tiktokVideos = await page.evaluate(() =>
-            Array.from(document.querySelectorAll('a[data-e2e="challenge-video-card"]')).map(link => ({
-                embedUrl: `https://www.tiktok.com/embed/${link.href.split('/video/')[1]}`
-            }))
-        );
-        videos.push(...tiktokVideos);
+        if (fs.existsSync(CACHE_FILE)) {
+            const fileContent = fs.readFileSync(CACHE_FILE, 'utf-8');
+
+            if (!fileContent.trim()) {
+                console.warn("⚠️ Warning: videosCache.json is empty.");
+                return null;
+            }
+
+            const cacheData = JSON.parse(fileContent);
+
+            if (Date.now() - cacheData.timestamp < CACHE_DURATION) {
+                console.log("✅ Serving cached videos...");
+                return cacheData.videos;
+            }
+        }
     } catch (error) {
-        console.error('TikTok Scraping Failed:', error);
+        console.error("❌ Error reading cache file:", error);
     }
-
-    try {
-        // ✅ Scrape Instagram Videos
-        await page.goto(`https://www.instagram.com/explore/tags/${hashtag}`, { waitUntil: 'domcontentloaded' });
-        const instagramVideos = await page.evaluate(() =>
-            Array.from(document.querySelectorAll('a[href*="/reel/"]')).map(link => ({
-                embedUrl: `https://www.instagram.com/p/${link.getAttribute('href').split('/reel/')[1]}embed`
-            }))
-        );
-        videos.push(...instagramVideos);
-    } catch (error) {
-        console.error('Instagram Scraping Failed:', error);
-    }
-
-    try {
-        // ✅ Scrape YouTube Videos
-        await page.goto(`https://www.youtube.com/results?search_query=%23${hashtag}`, { waitUntil: 'domcontentloaded' });
-        const youtubeVideos = await page.evaluate(() =>
-            Array.from(document.querySelectorAll('a#video-title'))
-                .map(link => link.href.match(/v=([^&]+)/)) // Extract Video ID
-                .filter(match => match) // Ensure valid IDs
-                .map(match => ({ embedUrl: `https://www.youtube.com/embed/${match[1]}` }))
-        );
-        videos.push(...youtubeVideos);
-    } catch (error) {
-        console.error('YouTube Scraping Failed:', error);
-    }
-
-    await browser.close();
-
-    return videos.length > 0 ? videos : [{ embedUrl: '', message: 'No videos found. Please try again later.' }];
+    return null;
 };
 
-// ✅ API Route for Fetching Videos
-app.get('/api/scrape-videos', async (req, res) => {
+
+// ✅ Function to Save Videos to Cache
+const saveVideosToCache = (videos) => {
+    fs.writeFileSync(CACHE_FILE, JSON.stringify({ timestamp: Date.now(), videos }, null, 2));
+};
+
+// ✅ Scrape Function with Caching
+const scrapeVideos = async () => {
     try {
-        const videos = await scrapeVideos();
-        res.json({ videos });
+        console.log("🔄 Updating video cache...");
+        const hashtag = 'legendcookhouse';
+        const browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36');
+
+        const [tiktokVideos, youtubeVideos] = await Promise.all([
+            scrapeTikTok(page, hashtag),
+            scrapeYouTube(page, hashtag)
+        ]);
+
+        await browser.close();
+
+        const videos = [...tiktokVideos, ...youtubeVideos];
+        saveVideosToCache(videos); // ✅ Save to cache
+        console.log("✅ Video cache updated!");
+
+        return videos;
     } catch (error) {
         console.error('Scraping error:', error);
-        res.status(500).json({ error: 'Failed to scrape videos.' });
+        return [];
     }
+};
+
+// ✅ TikTok Scraper
+const scrapeTikTok = async (page, hashtag) => {
+    try {
+        console.log("🔍 Scraping TikTok...");
+        await page.goto(`https://www.tiktok.com/tag/${hashtag}`, { waitUntil: 'networkidle2' });
+
+        return await page.evaluate(() =>
+            Array.from(document.querySelectorAll('a[data-e2e="challenge-video-card"]')).map(link => ({
+                embedUrl: link.href
+            }))
+        );
+    } catch (error) {
+        console.error("Refresh The Page!!", error);
+        return [];
+    }
+};
+
+const scrapeYouTube = async (page, hashtag) => {
+    try {
+        console.log("🔍 Scraping YouTube...");
+        await page.goto(`https://www.youtube.com/results?search_query=%23${hashtag}`, { waitUntil: 'networkidle2' });
+
+        const videos = await page.evaluate(() => {
+            return Array.from(document.querySelectorAll('a#video-title'))
+                .map(link => {
+                    const videoId = new URL(link.href).searchParams.get('v');
+                    return videoId ? { embedUrl: `https://www.youtube.com/embed/${videoId}`, videoId } : null;
+                })
+                .filter(video => video !== null);
+        });
+
+        // ✅ List of Unwanted Video IDs
+        const excludedVideos = [
+            "TO2yEJgJKRw",  // First video you want to remove
+            "JXAWPz8BwD0", // Replace this with the new unwanted video ID
+        ];
+
+        // ✅ Filter out unwanted videos
+        const filteredVideos = videos.filter(video => !excludedVideos.includes(video.videoId));
+
+        console.log("📌 YouTube Videos Scraped (Filtered):", filteredVideos);
+        return filteredVideos;
+    } catch (error) {
+        console.error("❌ YouTube scraping failed:", error);
+        return [];
+    }
+};
+
+
+// ✅ API Route to Fetch Videos
+app.get('/api/scrape-videos', async (req, res) => {
+    const cachedVideos = getCachedVideos();
+    if (cachedVideos) {
+        return res.json({ videos: cachedVideos }); // ✅ Serve cached videos instantly
+    }
+
+    const videos = await scrapeVideos();
+    if (videos.length > 0) {
+        res.json({ videos });
+    } else {
+        res.status(500).json({ error: 'Failed to scrape videos' });
+    }
+});
+
+// ✅ Periodically Refresh Cache Every 30 Minutes
+setInterval(scrapeVideos, CACHE_DURATION);
+
+// ✅ Root Route
+app.get('/', (req, res) => {
+    res.send('Backend is running with optimized caching for video scraping.');
 });
 
 // ✅ Start Server
 const PORT = 5001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

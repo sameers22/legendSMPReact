@@ -12,6 +12,7 @@ import Navbar from './components/Navbar';
 import Reservations from './pages/reservations';
 import BookEvent from './pages/BookEvent';
 import Sauces from './pages/Sauces'; // ✅ Import the Sauces page
+import Cart from './pages/Cart'; // ✅ Import Cart Page
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/reservations" element={<Reservations />} />
                 <Route path="/book-event" element={<BookEvent />} />
                 <Route path="/sauces" element={<Sauces />} />
+                <Route path="/cart" element={<Cart />} /> {/* ✅ Add Cart Page */}
             </Routes>
         </Router>
     );

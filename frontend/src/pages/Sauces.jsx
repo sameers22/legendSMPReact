@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import menuBackground from "../assets/menu-background.png"; // ✅ Use menu background
 
 const Sauces = () => {
     const [sauces, setSauces] = useState([]);
-    const [cart, setCart] = useState([]);
+    const [cart, setCart] = useState(() => JSON.parse(localStorage.getItem("cart")) || []);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSauces = async () => {
             try {
                 const response = await fetch("http://localhost:5002/api/shopify-products");
+                if (!response.ok) throw new Error("Failed to fetch products");
                 const data = await response.json();
-                setSauces(data.products);
+                setSauces(data.products || []);
             } catch (error) {
                 console.error("Error fetching sauces:", error);
             }
@@ -17,119 +21,88 @@ const Sauces = () => {
         fetchSauces();
     }, []);
 
-    // ✅ Add item to Cart
     const addToCart = (sauce) => {
-        setCart([...cart, sauce]);
+        const updatedCart = [...cart, sauce];
+        setCart(updatedCart);
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
     };
-
-    // ✅ Checkout Function (Place inside the component)
-    const checkoutWithShopify = async () => {
-        if (cart.length === 0) {
-            alert("Your cart is empty!");
-            return;
-        }
-    
-        try {
-            const response = await fetch("http://localhost:5002/api/shopify-checkout", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    items: cart.map(item => ({ id: item.variantId, quantity: 1 })) 
-                })
-            });
-    
-            const data = await response.json();
-            console.log("🔄 Shopify Response:", data); // ✅ Log Shopify Response
-    
-            if (data.checkoutUrl) {
-                console.log("✅ Redirecting to:", data.checkoutUrl);
-                window.location.href = data.checkoutUrl; // ✅ Redirect to Shopify Checkout
-            } else {
-                console.error("❌ Failed to create checkout:", data);
-                alert("Failed to create checkout. Please try again.");
-            }
-        } catch (error) {
-            console.error("❌ Checkout error:", error);
-            alert("An error occurred. Check the console for details.");
-        }
-    };
-    
 
     return (
         <div className="sauces-container">
-            <h1>Our Signature Sauces</h1>
-            <p className="subtitle">Explore our collection of flavorful sauces.</p>
-
-            {/* ✅ Display Cart Items */}
-            <div className="cart-container">
-                <h2>Cart</h2>
-                {cart.length === 0 ? (
-                    <p>Your cart is empty.</p>
-                ) : (
-                    cart.map((item, index) => (
-                        <div key={index} className="cart-item">
-                            <p>{item.title} - {item.price} {item.currency}</p>
-                        </div>
-                    ))
-                )}
-
-                {/* ✅ Checkout Button (Place below cart) */}
-                {cart.length > 0 && (
-                    <button className="checkout-btn" onClick={checkoutWithShopify}>
-                        Checkout Now
-                    </button>
-                )}
-            </div>
-
+            <h1 className="sauces-title">Our Signature Sauces</h1>
             <div className="sauces-grid">
                 {sauces.map((sauce, index) => (
                     <div key={index} className="sauce-card">
                         <img src={sauce.image} alt={sauce.title} className="sauce-image" />
-                        <h2>{sauce.title}</h2>
-                        <p>{sauce.description}</p>
-                        <p className="price">{sauce.price} {sauce.currency}</p>
-                        <button className="order-now-btn" onClick={() => addToCart(sauce)}>
-                            Add to Cart
-                        </button>
+                        <h2 className="sauce-title">{sauce.title}</h2>
+                        <p className="price">${sauce.price} {sauce.currency}</p>
+                        <button className="order-btn" onClick={() => addToCart(sauce)}>Add to Cart</button>
                     </div>
                 ))}
             </div>
+            {cart.length > 0 && (
+                <button className="view-cart-btn" onClick={() => navigate("/cart")}>
+                    View Cart ({cart.length})
+                </button>
+            )}
 
             <style jsx>{`
                 .sauces-container {
                     padding: 120px 20px 50px;
                     text-align: center;
-                    background-color: #f9f9f9;
                     min-height: 100vh;
+                    background: url(${menuBackground}) no-repeat center center/cover; /* ✅ Menu page background */
+                    width: 100vw;  /* Ensure it spans the entire viewport width */
+                    position: absolute;
+                    left: 0;
+                    right: 0;
                 }
-                .cart-container {
-                    background: white;
-                    padding: 20px;
-                    border-radius: 10px;
-                    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-                    margin-bottom: 20px;
-                }
-                .cart-item {
-                    border-bottom: 1px solid #ddd;
-                    padding: 10px 0;
-                }
-                .checkout-btn {
-                    background-color: #27ae60;
-                    color: white;
-                    padding: 10px;
-                    border: none;
-                    border-radius: 5px;
+                .sauces-title {
+                    font-size: 2.5rem;
                     font-weight: bold;
-                    cursor: pointer;
+                    color: gold;
+                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+                    margin-bottom: 30px;
+                }
+                .sauces-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr); /* ✅ Three items per row */
+                    gap: 20px;
+                    justify-items: center;
+                }
+                .sauce-card {
+                    background: rgba(0, 0, 0, 0.7); /* ✅ Translucent black */
+                    border-radius: 10px;
+                    padding: 15px;
+                    width: 280px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+                    text-align: center;
+                    transition: transform 0.3s ease-in-out;
+                }
+                .sauce-card:hover {
+                    transform: translateY(-5px);
+                }
+                .sauce-image {
                     width: 100%;
-                    transition: background 0.3s;
+                    height: 180px;
+                    object-fit: cover;
+                    border-radius: 10px;
                 }
-                .checkout-btn:hover {
-                    background-color: #219150;
+                .sauce-title {
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                    color: white;
+                    margin-top: 10px;
                 }
-                .order-now-btn {
-                    padding: 8px 12px;
-                    background-color: #f1c40f;
+                .price {
+                    font-size: 1.1rem;
+                    font-weight: bold;
+                    color: gold;
+                    margin: 10px 0;
+                }
+                .order-btn {
+                    padding: 10px 15px;
+                    background-color: gold;
                     color: black;
                     border: none;
                     border-radius: 5px;
@@ -137,8 +110,32 @@ const Sauces = () => {
                     cursor: pointer;
                     transition: background 0.3s;
                 }
-                .order-now-btn:hover {
+                .order-btn:hover {
                     background-color: #d4ac0d;
+                }
+                .view-cart-btn {
+                    background: gold;
+                    color: black;
+                    padding: 12px 20px;
+                    font-size: 1.2rem;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-weight: bold;
+                    margin-top: 30px;
+                }
+                .view-cart-btn:hover {
+                    background: #d4ac0d;
+                }
+                @media (max-width: 900px) {
+                    .sauces-grid {
+                        grid-template-columns: repeat(2, 1fr); /* ✅ Two per row on tablets */
+                    }
+                }
+                @media (max-width: 600px) {
+                    .sauces-grid {
+                        grid-template-columns: repeat(1, 1fr); /* ✅ Single column for mobile */
+                    }
                 }
             `}</style>
         </div>
